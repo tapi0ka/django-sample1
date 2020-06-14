@@ -1,0 +1,7 @@
+pylint
+yapf
+django
+pylint-django
+djangorestframework
+djangorestframework-simplejwt
+selenium
