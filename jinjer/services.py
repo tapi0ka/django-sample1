@@ -4,6 +4,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import importlib
 
+from jinjer.models import ExecList
+
 
 class BasePage:
     def __init__(self, driver=None, url=None):
@@ -12,6 +14,11 @@ class BasePage:
 
     def __exit__(self, exception_type, exception_value, traceback):
         self.driver.quit()
+
+
+def get_exec(limit=None, **filters):
+    """ simple service function for retrieving books can be widely extended """
+    return ExecList.objects.filter(**filters)[:limit]  # list[:None] will return the entire list
 
 
 class JinjerExecService(object):
