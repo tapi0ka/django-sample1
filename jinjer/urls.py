@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 
-from .views import MainListViewSet, SubListViewSet, index, CheckInViewSet
+from .views import MainListViewSet, SubListViewSet, CheckInViewSet
 from rest_framework import routers
 
 # router = routers.DefaultRouter()

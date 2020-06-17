@@ -1,81 +1,35 @@
+import os
+import importlib
+import time
+
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-import importlib
 
 from jinjer.models import ExecList
 
 
-class BasePage:
-    def __init__(self, driver=None, url=None):
-        self.driver = driver
-        self.url = url
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        self.driver.quit()
-
-
-def get_exec(limit=None, **filters):
-    """ simple service function for retrieving books can be widely extended """
-    return ExecList.objects.filter(**filters)[:limit]  # list[:None] will return the entire list
+def login(driver):
+    driver.get("https://kintai.jinjer.biz/staffs/top")
+    driver.find_element_by_id('company_code').send_keys(
+        os.getenv("DJANGO_JINJER_COMPANY_CODE"))
+    driver.find_element_by_name('email').send_keys(
+        os.getenv("DJANGO_JINJER_EMAIL"))
+    driver.find_element_by_name('password').send_keys(
+        os.getenv("DJANGO_JINJER_PASSWORD"))
+    driver.find_element_by_id('jbtn-login-staff').click()
+    print('[Success] Login.')
 
 
-class JinjerExecService(object):
-    def __init__(self, request):
-        self.request = request
-        self.driver = WebdriverWrapper()
-
-    def create_webdriver_instance(self):
-        try:
-            importlib.import_module('chromedriver_binary')
-            instance = webdriver.Chrome(options=get_options())
-        except ModuleNotFoundError:
-            print('Not found chromedriverbinary. so use config path')
-            instance = webdriver.Chrome(
-                executable_path="/usr/bin/chromedriver", options=get_options())
-        # except AttributeError:
-        #     print('メソッドが見つからない')
-        return instance
-
-    def checkin(self):
-        self.driver
+def clockingIn(driver):
+    syukkin_button = (By.XPATH, '//*[@id="container"]//button[@data-type="check_in"]')
+    driver.find_element_by_xpath('//*[@id="container"]//button[@data-type="check_in"]').click()
+    print('[Success] Clocking In.')
 
 
-def get_options():
-    options = webdriver.ChromeOptions()
-    # options.add_argument('--headless')
-    options.add_argument('--disable-gpu')
-    options.add_argument('--disable-extensions')
-    options.add_argument('--disable-features=VizDisplayCompositor')
-    options.add_argument('--no-sandbox')
-    options.add_argument('--window-size=1280x800')
-    # options.add_argument('--disable-application-cache')
-    # options.add_argument('--disable-infobars')
-    # options.add_argument('--hide-scrollbars')
-    # options.add_argument('--enable-logging')
-    # options.add_argument('--log-level=0')
-    # options.add_argument('--single-process')
-    # options.add_argument('--ignore-certificate-errors')
-    # options.add_argument('--homedir=/tmp')
-    # options.binary_location = '/usr/bin/google-chrome'
-    return options
-
-
-class WebdriverWrapper:
-    def __init__(self):
-        self._opt = get_options()
-        self._driver = None
-        # optの初期化コード
-
-    def __enter__(self):
-        try:
-            importlib.import_module('chromedriver_binary')
-            self._driver = webdriver.Chrome(options=self._opt)
-        except ModuleNotFoundError:
-            print('Not found chromedriverbinary. so use config path')
-            self._driver = webdriver.Chrome(
-                executable_path="/usr/bin/chromedriver", options=self._opt)
-
-    def __exit__(self, exception_type, exception_value, traceback):
-        self._driver.quit()
+def clockingOut(driver):
+    taikin_button = (By.XPATH,
+                     '//*[@id="container"]//button[@data-type="check_out"]')
+    driver.find_element(*taikin_button).click()
+    print('[Success] Clocking Out.')

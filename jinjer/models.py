@@ -1,5 +1,6 @@
+import uuid
 from django.db import models
-
+from django.utils import timezone
 
 #メインリストテーブル
 class MainList(models.Model):
@@ -67,3 +68,18 @@ class ExecList(models.Model):
     #名称設定
     def __str__(self):
         return self.employee_id
+
+
+class ErrorLog(models.Model):
+    class Meta:
+        db_table = 'error_log'
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user_id = models.CharField(verbose_name='ユーザID', max_length=100)
+    event_id = models.IntegerField()
+    message = models.CharField(verbose_name='詳細', max_length=200)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    #名称設定
+    def __str__(self):
+        return str(self.created_at)
