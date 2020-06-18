@@ -1,6 +1,6 @@
 from django.conf.urls import include, url
 
-from .views import MainListViewSet, SubListViewSet, CheckInViewSet
+from .views import MainListViewSet, SubListViewSet, CheckInViewSet, CheckOutViewSet
 from rest_framework import routers
 
 # router = routers.DefaultRouter()
@@ -8,6 +8,7 @@ router = routers.SimpleRouter(trailing_slash=False)
 router.register(r'mainlist', MainListViewSet)
 router.register(r'sublist', SubListViewSet)
 router.register(r'checkin', CheckInViewSet)
+router.register(r'checkout', CheckOutViewSet)
 
 app_name = "jinjer"
 urlpatterns = [

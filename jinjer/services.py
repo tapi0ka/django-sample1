@@ -12,24 +12,37 @@ from jinjer.models import ExecList
 
 def login(driver):
     driver.get("https://kintai.jinjer.biz/staffs/top")
-    driver.find_element_by_id('company_code').send_keys(
+    driver.find_element(*LoginPageLocators.COMPANY_CODE_TEXT).send_keys(
         os.getenv("DJANGO_JINJER_COMPANY_CODE"))
-    driver.find_element_by_name('email').send_keys(
+    driver.find_element(*LoginPageLocators.ID_TEXT).send_keys(
         os.getenv("DJANGO_JINJER_EMAIL"))
-    driver.find_element_by_name('password').send_keys(
+    driver.find_element(*LoginPageLocators.PASSWORD_TEXT).send_keys(
         os.getenv("DJANGO_JINJER_PASSWORD"))
-    driver.find_element_by_id('jbtn-login-staff').click()
+    driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
     print('[Success] Login.')
 
 
-def clockingIn(driver):
-    syukkin_button = (By.XPATH, '//*[@id="container"]//button[@data-type="check_in"]')
-    driver.find_element_by_xpath('//*[@id="container"]//button[@data-type="check_in"]').click()
+class LoginPageLocators(object):
+    '''
+    [Location] Login Page
+    '''
+    COMPANY_CODE_TEXT = (By.ID, 'company_code')
+    ID_TEXT = (By.NAME, 'email')
+    PASSWORD_TEXT = (By.NAME, 'password')
+    LOGIN_BUTTON = (By.ID, 'jbtn-login-staff')
+
+
+def checkIn(driver):
+    syukkin_button = (By.XPATH,
+                      '//*[@id="container"]//button[@data-type="check_in"]')
+    driver.find_element_by_xpath(
+        '//*[@id="container"]//button[@data-type="check_in"]').click()
     print('[Success] Clocking In.')
 
 
-def clockingOut(driver):
+def checkOut(driver):
     taikin_button = (By.XPATH,
                      '//*[@id="container"]//button[@data-type="check_out"]')
-    driver.find_element(*taikin_button).click()
+    driver.find_element(
+        '//*[@id="container"]//button[@data-type="check_out"]').click()
     print('[Success] Clocking Out.')

@@ -1,7 +1,5 @@
 """This is a est program."""
-import os
-import importlib
-import time
+from django.utils import timezone
 
 from rest_framework import status, viewsets
 from rest_framework.permissions import IsAuthenticated
@@ -9,7 +7,7 @@ from rest_framework.response import Response
 
 from selenium import webdriver
 
-from jinjer.services import login, clockingIn, clockingOut
+from jinjer.services import login, checkIn, checkOut
 
 from jinjer.serializers import MainListSerializer
 from jinjer.serializers import SubListSerializer
@@ -22,6 +20,9 @@ from jinjer.models import ErrorLog
 
 
 class MainListViewSet(viewsets.ModelViewSet):
+    '''
+    サンプル
+    '''
     queryset = MainList.objects.all()
     serializer_class = MainListSerializer
     #認証済のみアクセス可能
@@ -29,6 +30,9 @@ class MainListViewSet(viewsets.ModelViewSet):
 
 
 class SubListViewSet(viewsets.ModelViewSet):
+    '''
+    サンプル
+    '''
     queryset = SubList.objects.all()
     serializer_class = SubListSerializer
     #認証済のみアクセス可能
@@ -36,39 +40,93 @@ class SubListViewSet(viewsets.ModelViewSet):
 
 
 class CheckInViewSet(viewsets.ModelViewSet):
-    # http_method_names = ['post']
-    # queryset = get_exec()
+    '''
+    API /api/jinjer/checkin
+    出勤打刻時のAPI
+    '''
     queryset = ExecList.objects.all()
     serializer_class = ExecListSerializer
     permission_classes = [IsAuthenticated]
 
-    # lookup_field = 'slug'
-
-    # @action(detail=False, methods=['post'])
-    # def set_password(self, request, pk=None):
-    #     print("aaa")
-    #     exec = self.get_object()
-    #     serializer = ExecListSerializer(data=request.data)
-    #     pass
-    # return Response("aaa")
-    # return Response("error", status=status.HTTP_400_BAD_REQUEST)
-
     def create(self, request, *args, **kwargs):
+        # 本当はクライアント側からContent-Type: application/jsonで投げるパラメータだけどめんどいから直接入れている
+        request.data['exec_method'] = "checkin"
+        request.data['process_status'] = "success"
+        request.data['begin_at'] = timezone.now()
+        request.data['end_at'] = timezone.now()
+
+        # dict形式のデータをシリアライザにぶっこむ
         serializer = self.get_serializer(data=request.data)
+
+        # シリアライザにぶっこんだdictが問題ないかチェック
         serializer.is_valid(raise_exception=True)
 
         try:
             driver = webdriver.Chrome(options=get_options())
             login(driver)
-            clockingIn(driver)
-            # raise NameError('HiThere')
+            checkIn(driver)
         except Exception as ex:
+            print('error')
             ErrorLog(user_id="takashi",
                      event_id=1,
-                     message="{}_seleniumでエラー発生".format(ex)).save()
+                     message="{}".format(ex)).save()
+            # エラーのときは事項ステータスをエラーに変更
+            request.data['process_status'] = 'error'
         finally:
             driver.close()
 
+        request.data['end_at'] = timezone.now()
+        serializer = self.get_serializer(data=request.data)
+
+        # DBにデータインサート
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data,
+                        status=status.HTTP_201_CREATED,
+                        headers=headers)
+
+class CheckOutViewSet(viewsets.ModelViewSet):
+    '''
+    API /api/jinjer/checkout
+    退勤打刻時のAPI
+    '''
+    queryset = ExecList.objects.all()
+    serializer_class = ExecListSerializer
+    permission_classes = [IsAuthenticated]
+
+    def create(self, request, *args, **kwargs):
+        # 本当はクライアント側からContent-Type: application/jsonで投げるパラメータだけどめんどいから直接入れている
+        request.data['exec_method'] = "checkout"
+        request.data['process_status'] = "success"
+        request.data['begin_at'] = timezone.now()
+        request.data['end_at'] = timezone.now()
+
+        # dict形式のデータをシリアライザにぶっこむ
+        serializer = self.get_serializer(data=request.data)
+
+        # シリアライザにぶっこんだdictが問題ないかチェック
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            driver = webdriver.Chrome(options=get_options())
+            login(driver)
+            checkOut(driver)
+        except Exception as ex:
+            print('error')
+            ErrorLog(user_id="takashi",
+                     event_id=2,
+                     message="{}".format(ex)).save()
+            # エラーのときは事項ステータスをエラーに変更
+            request.data['process_status'] = 'error'
+        finally:
+            driver.close()
+
+        request.data['end_at'] = timezone.now()
+        serializer = self.get_serializer(data=request.data)
+
+        # DBにデータインサート
+        serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data,
