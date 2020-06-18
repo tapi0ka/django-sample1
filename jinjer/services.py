@@ -33,10 +33,14 @@ class LoginPageLocators(object):
 
 
 def checkIn(driver):
-    syukkin_button = (By.XPATH,
-                      '//*[@id="container"]//button[@data-type="check_in"]')
-    driver.find_element_by_xpath(
-        '//*[@id="container"]//button[@data-type="check_in"]').click()
+    # syukkin_button = (By.XPATH,
+    #                   '//*[@id="container"]//button[@data-type="check_in"]')
+    print("checkin")
+    time.sleep(5)
+    syukkin_button = '//*[@id="container"]//button[@data-type="check_in"]'
+    print(syukkin_button)
+    driver.find_element(By.XPATH, syukkin_button).click()
+
     print('[Success] Clocking In.')
 
 
