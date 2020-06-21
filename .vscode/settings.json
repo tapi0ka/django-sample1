@@ -1,6 +1,6 @@
 {
   "python.formatting.provider": "yapf",
-  "python.pythonPath": "djangosample1-env/bin/python",
+  "python.pythonPath": "./app/djangosample1-env/bin/python",
   "python.linting.pylintArgs": [
     "--load-plugins=pylint_django"
   ],

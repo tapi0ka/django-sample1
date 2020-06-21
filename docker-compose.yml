@@ -8,15 +8,8 @@ services:
       - ./.env
     # environment:
     #   - DJANGO_READ_ENV_FILE=False
-    command: gunicorn djangosample1.wsgi --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./app:/usr/src/app
-
-  nginx:
-    image: nginx
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
     ports:
-      - 80:80
-    depends_on:
-      - django
+      - 8000:8000
