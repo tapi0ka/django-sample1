@@ -1,9 +1,0 @@
-pylint # Linter
-yapf # フォーマッタ
-django # フレームワーク
-django-environ # .envを使えるようにする
-pylint-django # django特有のLinter
-djangorestframework # REST APIを利用できるようにする
-djangorestframework-simplejwt # JWT認証を有効化
-selenium # ブラウザ自動化
-chromedriver_binary # Chromeのドライバ

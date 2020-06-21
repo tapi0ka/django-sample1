@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  django:
+    build:
+      context: ./app
+    env_file:
+      - ./.env
+    # environment:
+    #   - DJANGO_READ_ENV_FILE=False
+    command: gunicorn djangosample1.wsgi --bind 0.0.0.0:8000
+    volumes:
+      - ./app:/usr/src/app
+
+  nginx:
+    image: nginx
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - 80:80
+    depends_on:
+      - django
