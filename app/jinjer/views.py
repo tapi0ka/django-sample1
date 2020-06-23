@@ -73,7 +73,7 @@ class CheckInViewSet(viewsets.ModelViewSet):
         try:
             driver = webdriver.Chrome(options=get_options())
             login(driver)
-            # check_in(driver)
+            check_in(driver)
             # time.sleep(5)
         except Exception as ex:
             print('error')
