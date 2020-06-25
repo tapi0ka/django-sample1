@@ -62,6 +62,16 @@ curl -X POST -H "Authorization: Bearer {APIキー}" {ホスト名}/api/jinjer/ch
 
 成功時はsuccessが帰ってくる
 
+自動化（crontab追記）
+
+
+```shell
+crontab -e
+# crontab に以下を記述
+50 8 * * 1-5  bash ${HOME}/workspace/django-sample1/checkin.sh
+35 17 * * 1-5  bash ${HOME}/workspace/django-sample1/checkout.sh
+```
+
 
 ## 機能(Function)
 
