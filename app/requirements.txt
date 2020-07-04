@@ -6,5 +6,5 @@ pylint-django # django特有のLinter
 djangorestframework # REST APIを利用できるようにする
 djangorestframework-simplejwt # JWT認証を有効化
 selenium # ブラウザ自動化
-# chromedriver_binary # Chromeのドライバ (Dockerfile側でインストールする
+chromedriver_binary # Chromeのドライバ (Dockerで動かす場合は必要ない)
 gunicorn # 本番用WSGI(Web Server Gateway Interface)
