@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',  # API
     'jinjer.apps.JinjerConfig',  # API
+    'sns.apps.SnsConfig',  # API
     # 'sample.apps.SampleConfig',  # API
     'rest_framework'
 ]
@@ -78,12 +79,29 @@ WSGI_APPLICATION = 'djangosample1.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
+# sqlite3を使う場合
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# MySQL
+# DATABASES = {
+#   'default': {
+#     'ENGINE': 'django.db.backends.mysql',
+#     'NAME': 'sample_db',
+#     'USER': 'root',
+#     'PASSWORD': 'password',
+#     'HOST': 'db-mysql',
+#     'PORT': '3306',
+#     'OPTIONS': {
+#         'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#     }
+#   }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

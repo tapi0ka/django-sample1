@@ -1,3 +1,4 @@
+wheel # なんか必要らしい
 pylint # Linter
 yapf # フォーマッタ
 django # フレームワーク
@@ -8,3 +9,4 @@ djangorestframework-simplejwt # JWT認証を有効化
 selenium # ブラウザ自動化
 chromedriver_binary # Chromeのドライバ (Dockerで動かす場合は必要ない)
 gunicorn # 本番用WSGI(Web Server Gateway Interface)
+mysqlclient # MySQLを使うためのClient

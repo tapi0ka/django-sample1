@@ -11,5 +11,6 @@ app_name = 'api'
 urlpatterns = [
     path('token', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh', TokenRefreshView.as_view(), name='token_refresh'),
-    path('jinjer/', include('jinjer.urls'))
+    path('jinjer/', include('jinjer.urls')),
+    path('sns/', include('sns.urls'))
 ]

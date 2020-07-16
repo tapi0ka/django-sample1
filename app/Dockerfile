@@ -2,6 +2,8 @@ FROM python:3
 
 WORKDIR /usr/src/app
 
+# apt-key add したときにwarningを出さない
+ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=DontWarn
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
@@ -9,7 +11,8 @@ RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/so
   && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
   && apt-get update \
   && apt-get install -y \
-  google-chrome-stable
+  google-chrome-stable \
+  default-libmysqlclient-dev
 
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt

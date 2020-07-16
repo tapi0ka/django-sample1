@@ -67,7 +67,7 @@ class ExecList(models.Model):
 
     #名称設定
     def __str__(self):
-        return self.employee_id
+        return self.begin_at
 
 
 class ErrorLog(models.Model):
