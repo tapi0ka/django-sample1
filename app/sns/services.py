@@ -2,26 +2,23 @@
 import os
 
 import time
-from urllib.parse import urlparse
-
+from urllib import parse
+from collections import defaultdict
 
 from django.utils import timezone
-
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support.ui import Select
 
-from sns.models import Reports
-from collections import defaultdict
-
+from sns.models import Report
 
 
 class LoginPageLocators(object):
     '''
-    [Location]
-    Login Page
+    【Locator】
+    ログイン画面
     '''
     USERNAME_TEXT = (By.ID, 'username')
     PASSWORD_TEXT = (By.ID, 'password')
@@ -29,6 +26,7 @@ class LoginPageLocators(object):
 
 class ReportSearchLocators(object):
     '''
+    【Locator】
     月報検索画面
     '''
     REPORT_DETAIL_URLS = (By.XPATH, '//table[@border="1" and @cellspacing="0"]/tbody/tr/td[1]//a')
@@ -37,6 +35,7 @@ class ReportSearchLocators(object):
 
 class ReportDetailLocators(object):
     '''
+    【Locator】
     月報詳細画面
     '''
     REPORT_DETAIL_ITEMS = (By.XPATH, '//form[1]/table/tbody/tr[2]/td[2]/table[2]/tbody/tr/td/div')
@@ -51,7 +50,7 @@ def login(driver):
     driver.get("https://" + basic_info + "sv27.wadax.ne.jp/~stylagy-co-jp/sns/")
 
     driver.find_element(*LoginPageLocators.USERNAME_TEXT).send_keys(os.getenv('DJANGO_SNS_EMAIL'))
-    driver.find_element(*LoginPageLocators.PASSWORD_TEXT).send_keys(os.getenv('DJANGO_SNS_PSSSWORD'))
+    driver.find_element(*LoginPageLocators.PASSWORD_TEXT).send_keys(os.getenv('DJANGO_SNS_PASSWORD'))
     driver.find_element(*LoginPageLocators.LOGIN_BUTTON).click()
     print('[Complete]:Login.')
 
@@ -76,7 +75,7 @@ def select_dropdown(driver, ym):
 
 def get_report_urls(driver, ym):
     '''
-    月報のURLを取得する
+    月報検索画面から月報のURLを取得する
     '''
     driver.get("https://sv27.wadax.ne.jp/~stylagy-co-jp/sns/?m=pc&a=page_h_report_m_search")
     elements = driver.find_elements(*ReportSearchLocators.REPORT_DETAIL_URLS)
@@ -93,26 +92,12 @@ def get_report_urls(driver, ym):
             continue # 月報を書いてない人のURLは取得しない
         urllist.append(elements[i].get_attribute('href'))
 
-    print(urllist)
-
     return urllist
 
-def open_report_detail(driver, url):
+def get_report_item_list(driver):
     '''
-    月報のURLを取得する
+    月報情報を取得し、dict型で戻り値を返す
     '''
-    driver.get(url)
-
-    o = urlparse(url)
-    print(o)
-
-    # print(driver.page_source) # 開いているURLのHTMLを確認する
-
-
-    # FILENAME = os.path.join(os.path.dirname(os.path.abspath(__file__)), "image/screen.png")
-    # print(FILENAME)
-    # driver.save_screenshot(FILENAME)
-
     elements = driver.find_elements(*ReportDetailLocators.REPORT_DETAIL_ITEMS)
     elements_iter = iter(elements)
     d = defaultdict(lambda:'')
@@ -123,8 +108,23 @@ def open_report_detail(driver, url):
                 d[item_name] = elements_iter.__next__().text
         except StopIteration:
             break
+    return d
 
-    obj = Reports(
+def open_report_detail(driver, url):
+    '''
+    月報のURLを取得する
+    '''
+    driver.get(url)
+
+    # URLをパースしてクエリ部分を取り出す
+    qs_d = parse.parse_qs(parse.urlparse(url).query)
+
+    # print(driver.page_source) # 開いているURLのHTMLを確認する
+
+    d = get_report_item_list(driver)
+
+    obj = Report(
+        id=qs_d['id'][0],
         submitter=d['提出者'],
         submission_year_month=d['提出年月'],
         work_place=d['作業場所'],
@@ -139,9 +139,7 @@ def open_report_detail(driver, url):
         created_at=timezone.now(),
         updated_at=timezone.now(),
         )
-
     obj.save()
-
     return
 
 def check_item(str):

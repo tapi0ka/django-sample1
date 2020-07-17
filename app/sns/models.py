@@ -22,15 +22,15 @@ class ExecList(models.Model):
     def __str__(self):
         return self.begin_at
 
-class Reports(models.Model):
+class Report(models.Model):
     '''
     処理日時リスト
     '''
-    class Meta:
+    # class Meta:
         #テーブル名設定
-        db_table = 'reports'
+        # db_table = 'report'
 
-    # id = models.CharField(max_length=10, primary_key=True)
+    id = models.CharField(max_length=10, primary_key=True)
     submitter = models.CharField(verbose_name='提出者', max_length=200)
     submission_year_month = models.CharField(verbose_name='提出年月', max_length=200)
     work_place = models.CharField(verbose_name='作業場所', max_length=200)
@@ -53,4 +53,4 @@ class Reports(models.Model):
 
     #名称設定
     def __str__(self):
-        return self.submitter
+        return self.id

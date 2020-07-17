@@ -58,10 +58,11 @@ class GetReportViewSet(viewsets.ModelViewSet):
             login(driver)
             # report_url_list = get_report_urls(driver, request.data['YMD'])
             # for item in report_url_list:
-            open_report_detail(driver, 'https://sv27.wadax.ne.jp/~stylagy-co-jp/sns/?m=pc&a=page_h_report_m_show&id=12324')
-            # open_report_detail(driver, item)
+            #     open_report_detail(driver, item)
+            for i in range(12025, 12330, 1):
+                open_report_detail(driver, 'https://sv27.wadax.ne.jp/~stylagy-co-jp/sns/?m=pc&a=page_h_report_m_show&id='+str(i))
         except Exception as ex:
-            print('error')
+            print('error:' + ex)
             ErrorLog(user_id="takashi", event_id=1,
                      message="{}".format(ex)).save()
             # エラーのときは事項ステータスをエラーに変更
