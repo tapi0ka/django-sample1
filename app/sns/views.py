@@ -59,7 +59,7 @@ class GetReportViewSet(viewsets.ModelViewSet):
             # report_url_list = get_report_urls(driver, request.data['YMD'])
             # for item in report_url_list:
             #     open_report_detail(driver, item)
-            for i in range(12025, 12330, 1):
+            for i in range(12300, 12330, 1):
                 open_report_detail(driver, 'https://sv27.wadax.ne.jp/~stylagy-co-jp/sns/?m=pc&a=page_h_report_m_show&id='+str(i))
         except Exception as ex:
             print('error:' + ex)
